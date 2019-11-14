@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="log.directory" value="./logs/"/>
+    <property name="log.context.name" value="myweb"/>
+    <property name="log.charset" value="UTF-8"/>
+    <property name="log.maxHistory" value="30"/>
+    <property name="log.maxFileSize" value="25MB" />
+    <property name="log.pattern" value="[%-5level] %date --%thread-- [%logger{36}] [%file:%line] -[%X{VO}]- %msg%n"/>
+    <property name="log.error.log.level" value="WARN"/>
+    <property name="log.async.queue.size" value="8192"/>
+
+    <contextName>${log.context.name}</contextName>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="${log.charset}">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${log.directory}${log.context.name}-log.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
+        </rollingPolicy>
+        <encoder charset="${log.charset}">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 默认情况下，当BlockingQueue还有20%容量，他将丢弃TRACE、DEBUG和INFO级别的event，只保留WARN和ERROR级别的event。为了保持所有的events，设置该值为0。 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- BlockingQueue的最大容量，默认情况下，大小为256。 -->
+        <queueSize>${log.async.queue.size}</queueSize>
+        <!-- 异步打印的appender -->
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.error.log.level}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${log.directory}${log.context.name}-error.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+            <maxFileSize>${log.maxFileSize}</maxFileSize>
+        </rollingPolicy>
+        <encoder charset="${log.charset}">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ERROR"/>
+    </root>
+</configuration>
