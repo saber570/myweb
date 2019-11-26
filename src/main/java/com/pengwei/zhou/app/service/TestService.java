@@ -20,4 +20,6 @@ public interface TestService {
    * 删除所有用户
    */
   void deleteAllUsers();
+
+  String handle(String name);
 }

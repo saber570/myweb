@@ -1,6 +1,11 @@
 package com.pengwei.zhou.app.service.Impl;
 
+import com.google.common.collect.Maps;
 import com.pengwei.zhou.app.service.TestService;
+import com.pengwei.zhou.app.utils.FreemarkerHelper;
+import java.time.LocalDate;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -27,4 +32,14 @@ public class TestServiceImpl implements TestService {
   public void deleteAllUsers() {
     jdbcTemplate.update("delete from USER_1");
   }
+
+  @Override
+  public String handle(String name) {
+      Map<String, Object> map = Maps.newHashMap();
+      map.put("info", "bo");
+      return FreemarkerHelper.process(name, map);
+  }
+
+
+
 }
